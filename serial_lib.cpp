@@ -10,6 +10,7 @@
 
 Serial_lib::Serial_lib(int port){
   _port = port;
+  _listInit(&_dataList);
 }
 
 void Serial_lib::init() {
@@ -32,14 +33,51 @@ void Serial_lib::init() {
 
 void Serial_lib::listener() {
   int n = 0;
+  
+  _listInit(&_dataList);//initialize the data list of the transmission
+  
   switch (_port) {
     case 0:
-    n = Serial.available();
-    _listInit(_dataList);
-    
+    _readBuffer(&_dataList, Serial.available());
+    break;
+    case 1:
+    _readBuffer(&_dataList, Serial1.available());
+    break;
+    case 2:
+    _readBuffer(&_dataList, Serial2.available());
+    break;
+    case 3:
+    _readBuffer(&_dataList, Serial3.available());
+    break;
   }
 }
 
-void Serial_lib::_listInit(int *list) {
-  free(list);
+void Serial_lib::_listInit(tDataList *list) {
+  free(list->element);
+  list->nElement = 0;
+}
+
+void Serial_lib::_readBuffer(tDataList *list, int n) {
+  if (list->nElement == 0) {
+    list->element = (int*) malloc(n * sizeof(int));
+  } else {
+    list->element = (int*) realloc(list->element, (list->nElement + n) *sizeof(int));
+  }
+  for (int i = list->nElement; i < n; i++) {
+    switch (_port) {
+      case 0:
+      list->element[i] = Serial.read();
+      break;
+      case 1:
+      list->element[i] = Serial1.read();
+      break;
+      case 2:
+      list->element[i] = Serial2.read();
+      break;
+      case 3:
+      list->element[i] = Serial3.read();
+      break;
+    }
+    list->nElement++;
+  }
 }
