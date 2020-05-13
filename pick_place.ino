@@ -5,15 +5,16 @@
  *  description: main for pick & place
  */
 
+#include "serial_lib.h"
 
+Serial_lib serial(1);
 
 void setup() {
-  Serial.begin(9600);
-  Serial1.begin(115200);
+  serial.init();
 
 }
 
 void loop() {
-
+  serial.listener();
 
 }
