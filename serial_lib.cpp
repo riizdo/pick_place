@@ -10,6 +10,7 @@
 
 Serial_lib::Serial_lib(int port){
   _port = port;
+  _empty = true;
   _listInit(&_dataList);
 }
 
@@ -32,9 +33,9 @@ void Serial_lib::init() {
 }
 
 void Serial_lib::listener() {
-  int n = 0;
-  
-  _listInit(&_dataList);//initialize the data list of the transmission
+  if (_empty) {
+    _listInit(&_dataList);//initialize the data list of the transmission
+  }
   
   switch (_port) {
     case 0:
@@ -79,5 +80,6 @@ void Serial_lib::_readBuffer(tDataList *list, int n) {
       break;
     }
     list->nElement++;
+    _empty = false;
   }
 }
