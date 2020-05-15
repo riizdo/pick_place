@@ -7,7 +7,7 @@
 
 #include "serial_lib.h"
 
-Serial_lib serial(1);
+Serial_lib serial(0);
 
 void setup() {
   serial.init();
@@ -16,5 +16,5 @@ void setup() {
 
 void loop() {
   serial.listener();
-
+  serial.show();
 }

@@ -8,13 +8,14 @@
 #include "Arduino.h"
 #include "serial_lib.h"
 
-Serial_lib::Serial_lib(int port){
+Serial_lib::Serial_lib(int port, int und = 0){   //the constructor of class
   _port = port;
+  _station = und;
   _empty = true;
   _listInit(&_dataList);
 }
 
-void Serial_lib::init() {
+void Serial_lib::init() {           //the init of class
   switch (_port) {
     case 0:
     Serial.begin(_BAUDRATE);
@@ -32,7 +33,7 @@ void Serial_lib::init() {
   }
 }
 
-void Serial_lib::listener() {
+void Serial_lib::listener() {       //the method listener
   if (_empty) {
     _listInit(&_dataList);//initialize the data list of the transmission
   }
@@ -82,4 +83,11 @@ void Serial_lib::_readBuffer(tDataList *list, int n) {
     list->nElement++;
     _empty = false;
   }
+}
+
+void Serial_lib::show() {
+  Serial.print("El puerto seleccionado: ");
+  Serial.println(_port);
+  Serial.print("La estacion seleccionada: ");
+  Serial.println(_station);
 }
