@@ -6,6 +6,8 @@
  */
 
 #include "serial_lib.h"
+#include "motion_lib.h"
+
 
 Serial_lib serial(0);
 

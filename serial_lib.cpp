@@ -9,10 +9,16 @@
 #include "serial_lib.h"
 
 Serial_lib::Serial_lib(int port, int und = 0){   //the constructor of class
-  _port = port;
   _station = und;
   _empty = true;
   _listInit(&_dataList);
+  if (port >= 0 && port <= 4) {
+    _port = port;
+    _error = OK_SERIAL;
+  } else {
+    _port = NULL;
+    _error = ERROR_SERIAL_PORT_ASSIGNED;
+  }
 }
 
 void Serial_lib::init() {           //the init of class
@@ -57,6 +63,7 @@ void Serial_lib::listener() {       //the method listener
 void Serial_lib::_listInit(tDataList *list) {
   free(list->element);
   list->nElement = 0;
+  _empty = true;
 }
 
 void Serial_lib::_readBuffer(tDataList *list, int n) {
@@ -90,4 +97,23 @@ void Serial_lib::show() {
   Serial.println(_port);
   Serial.print("La estacion seleccionada: ");
   Serial.println(_station);
+}
+
+int Serial_lib::port(int port = NULL) {
+  if (port == NULL) {
+    return _port;
+  } else if (port >= 0 && port <= 4) {
+    _port = port;
+    _error = OK_SERIAL;
+  } else {
+    _error = ERROR_SERIAL_PORT_ASSIGNED;
+  }
+}
+
+int Serial_lib::station(int station = NULL) {
+  if (station = NULL) {
+    return _station;
+  } else {
+    _station = station;
+  }
 }
