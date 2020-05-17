@@ -54,6 +54,9 @@ class Motion_lib {
   public:
     Motion_lib();
     tErrorMotion addMotor(tMotorList *list, char axis);
+    tErrorMotion removeMotor(tMotorList *list, char axis);
+    tErrorMotion addPoint(tCoordinateList *list, int x, int y);
+    tErrorMotion removePoint(tCoordinateList *list, int x, int y);
     void stepPin(tMotorList *list, char axis, int pin = NULL);
     void dirPin(tMotorList *list, char axis, int pin = NULL);
   

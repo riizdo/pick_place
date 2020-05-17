@@ -11,6 +11,7 @@
 
 Motion_lib::Motion_lib() {////////////////////////////////////////////CONSTRUCTOR---------------------------------------------------------
   _motorList_init(&_motorList);
+  _coordinateList_init(&_pointsList);
 }
 
 void Motion_lib::_motorList_init(tMotorList *list) {//-----------             motorList_init----------------------------------------------
@@ -51,4 +52,8 @@ tErrorMotion Motion_lib::addMotor(tMotorList *list, char axis) {//---         ad
   }
   list->nMotor++;
   return OK_MOTION;
+}
+
+tErrorMotion Motion_lib::removeMotor(tMotorList *list, char axis) {
+  
 }
