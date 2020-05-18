@@ -8,7 +8,7 @@
 #include "Arduino.h"
 #include "serial_lib.h"
 
-Serial_lib::Serial_lib(int port, int und = 0){   //the constructor of class
+Serial_lib::Serial_lib(int port, int und = 0){          //the constructor of class///////////////////////////////////////////
   _station = und;
   _empty = true;
   _listInit(&_dataList);
@@ -21,7 +21,7 @@ Serial_lib::Serial_lib(int port, int und = 0){   //the constructor of class
   }
 }
 
-void Serial_lib::init() {           //the init of class
+void Serial_lib::init() {                               //the init of class
   switch (_port) {
     case 0:
     Serial.begin(_BAUDRATE);
@@ -39,7 +39,7 @@ void Serial_lib::init() {           //the init of class
   }
 }
 
-void Serial_lib::listener() {       //the method listener
+void Serial_lib::listener() {                           //the method listener
   if (_empty) {
     _listInit(&_dataList);//initialize the data list of the transmission
   }
@@ -105,8 +105,10 @@ int Serial_lib::port(int port = NULL) {
   } else if (port >= 0 && port <= 4) {
     _port = port;
     _error = OK_SERIAL;
+    return NULL;
   } else {
     _error = ERROR_SERIAL_PORT_ASSIGNED;
+    return NULL;
   }
 }
 
@@ -115,5 +117,6 @@ int Serial_lib::station(int station = NULL) {
     return _station;
   } else {
     _station = station;
+    return NULL;
   }
 }

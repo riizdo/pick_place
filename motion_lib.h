@@ -17,6 +17,8 @@
 typedef enum {
   OK_MOTION,
   ERROR_MOTION_MOTOR_EXISTS,
+  ERROR_MOTION_MOTOR_NOT_EXISTS,
+  ERROR_MOTION_MOTOR_INDELIBLE,
   ERROR_MOTION_MEMORY,
   ERROR_MOTION_FULL_MOTORS
 } tErrorMotion;               //type error of this class
@@ -50,6 +52,7 @@ class Motion_lib {
 
     void _motorList_init(tMotorList *list);
     void _coordinateList_init(tCoordinateList *list);
+    tErrorMotion _motorExists(tMotorList *list, int axis);
 
   public:
     Motion_lib();
