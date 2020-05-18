@@ -20,18 +20,20 @@ typedef enum {
   ERROR_MOTION_MOTOR_NOT_EXISTS,
   ERROR_MOTION_MOTOR_INDELIBLE,
   ERROR_MOTION_MEMORY,
-  ERROR_MOTION_FULL_MOTORS
+  ERROR_MOTION_FULL_MOTORS,
+  ERROR_MOTION_POINT_NOT_EXISTS
 } tErrorMotion;               //type error of this class
 
 typedef struct {
+  int id;
   int pos_x;
   int pos_y;
-} tCoordinate;
+} tPoint;
 
 typedef struct {
-  int nPos;
-  tCoordinate *pos;
-} tCoordinateList;
+  int nPoint;
+  tPoint *point;
+} tPointList;
 
 typedef struct {
   int type;
@@ -47,21 +49,26 @@ typedef struct {
 
 class Motion_lib {
   private:
-    tCoordinateList _pointsList;
+    tPointList _pointsList;
     tMotorList _motorList;
 
     void _motorList_init(tMotorList *list);
-    void _coordinateList_init(tCoordinateList *list);
-    tErrorMotion _motorExists(tMotorList *list, int axis);
+    void _pointList_init(tPointList *list);
+    tErrorMotion _motorExists(tMotorList list, int axis);
+    tErrorMotion _pointExists(tPointList list, int id);
+    void _cpyMotor(tMotor *dest, tMotor orgn);
+    void _cpyPoint(tPoint *dets, tMotor orgn);
 
   public:
     Motion_lib();
     tErrorMotion addMotor(tMotorList *list, char axis);
     tErrorMotion removeMotor(tMotorList *list, char axis);
-    tErrorMotion addPoint(tCoordinateList *list, int x, int y);
-    tErrorMotion removePoint(tCoordinateList *list, int x, int y);
-    void stepPin(tMotorList *list, char axis, int pin = NULL);
-    void dirPin(tMotorList *list, char axis, int pin = NULL);
+    tErrorMotion addPoint(tPointList *list, tPoint point);
+    tErrorMotion removePoint(tPointList *list, int id);
+    tErrorMotion stepPin(tMotorList *list, char axis, int pin = NULL);
+    tErrorMotion dirPin(tMotorList *list, char axis, int pin = NULL);
+    tErrorMotion pos_x(tPointList *list, int id, int pos_x = NULL);
+    tErrorMotion pos_y(tPointList *list, int id, int pos_y = NULL);
   
 };
 

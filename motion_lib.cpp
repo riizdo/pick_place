@@ -11,7 +11,7 @@
 
 Motion_lib::Motion_lib() {////////////////////////////////////////////CONSTRUCTOR---------------------------------------------------------
   _motorList_init(&_motorList);
-  _coordinateList_init(&_pointsList);
+  _pointList_init(&_pointsList);
 }
 
 void Motion_lib::_motorList_init(tMotorList *list) {//-----------             motorList_init----------------------------------------------
@@ -19,9 +19,9 @@ void Motion_lib::_motorList_init(tMotorList *list) {//-----------             mo
   list->nMotor = 0;
 }
 
-void Motion_lib::_coordinateList_init(tCoordinateList *list) {//-----         coordinateList_init-----------------------------------------
-  free(list->pos);
-  list->nPos = 0;
+void Motion_lib::_pointList_init(tPointList *list) {//-----                   pointList_init-----------------------------------------
+  free(list->point);
+  list->nPoint = 0;
 }
 
 tErrorMotion Motion_lib::addMotor(tMotorList *list, char axis) {//---         addMotor----------------------------------------------------
@@ -61,7 +61,7 @@ tErrorMotion Motion_lib::removeMotor(tMotorList *list, char axis) {//---      re
     return ERROR_MOTION_MOTOR_INDELIBLE;
   }
 
-  if (_motorExists(list, axis) != OK_MOTION) {
+  if (_motorExists(*list, axis) != OK_MOTION) {
     return ERROR_MOTION_MOTOR_NOT_EXISTS;
   }
   
@@ -87,12 +87,65 @@ tErrorMotion Motion_lib::removeMotor(tMotorList *list, char axis) {//---      re
   return OK_MOTION;
 }
 
-tErrorMotion Motion_lib::_motorExists(tMotorList *list, int axis) {
-  for (int i = 0; i < list->nMotor; i++) {
-    if (list->motor[i].axis == axis) {
+tErrorMotion Motion_lib::_motorExists(tMotorList list, int axis) {//---        motorExists----------------------------------------------------
+  for (int i = 0; i < list.nMotor; i++) {
+    if (list.motor[i].axis == axis) {
       return OK_MOTION;
     }
   }
 
   return ERROR_MOTION_MOTOR_NOT_EXISTS;
+}
+
+tErrorMotion Motion_lib::addPoint(tPointList *list, tPoint point) {// ----      addPoint-------------------------------------------------------
+  if (list->nPoint == 0) {
+    list->point = (tPoint*) malloc(sizeof(tPoint));
+  } else {
+    list->point = (tPoint*) realloc(list->point, (list->nPoint + 1) * sizeof(tPoint));
+  }
+
+  if (list->point == NULL) {
+    return ERROR_MOTION_MEMORY;
+  }
+
+  list->point[list->nPoint].id = point.id;
+  list->point[list->nPoint].pos_x = point.pos_x;
+  list->point[list->nPoint].pos_y = point.pos_y;
+  list->nPoint++;
+
+  return OK_MOTION;
+}
+
+tErrorMotion Motion_lib::removePoint(tPointList *list, int id) {//------        removePoint---------------------------------------------------
+  if (_pointExists(*list, id) == ERROR_MOTION_POINT_NOT_EXISTS) {
+    return ERROR_MOTION_POINT_NOT_EXISTS;
+  }
+  
+  for (int i = list->nPoint; i == 0; i--) {
+    list->point[i].id = list->point[i -1].id;
+    list->point[i].pos_x = list->point[i - 1].pos_x;
+    list->point[i].pos_y = list->point[i - 1].pos_y;
+    if (list->point[i].id == id) {
+      break;
+    }
+  }
+
+  list->nPoint--;
+  list->point = (tPoint*) realloc(list->point, list->nPoint * sizeof(tPoint));
+
+  if (list->point == NULL) {
+    return ERROR_MOTION_MEMORY;
+  }
+
+  return OK_MOTION;
+}
+
+tErrorMotion Motion_lib::_pointExists(tPointList list, int id) {//--------       pointExists---------------------------------------------------
+  for (int i = 0; i < list.nPoint; i++) {
+    if (list.point->id == id) {
+      return OK_MOTION;
+    }
+  }
+
+  return ERROR_MOTION_POINT_NOT_EXISTS;
 }

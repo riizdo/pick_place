@@ -8,6 +8,14 @@
 starting proyect
 
 developing serial_lib
+	serial protocol for setter comunication
+		SOH-NºSTATION-COMMAND-STX-NºDATA-DATA*-ETX-CHECKSUM
+	response
+		STX-NºSTATION-ERROR CODE-ETX-CHECKSUM
+	serial protocol for getter comunication
+		SOH-NºSTATION-COMMAND-STX-NºDATA-ETX-CHECKSUM
+	response
+		STX-NºSTATION-ERROR CODE-DATA*-ETX-CHECKSUM
 
 developing motion_lib:
 	step pins and direction pins of motors are:
