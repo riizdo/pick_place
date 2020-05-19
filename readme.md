@@ -31,3 +31,5 @@ developing motion_lib:
 	tenth motor (axis *) step pin =11, direction pin = 31
 	eleventh motor(axis*)step pin =12, direction pin = 32
 	twelfth motor(axis*) step pin =13, direction pin = 33
+	
+	in pointList, the first axis is x and the second axis is y

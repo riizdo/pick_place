@@ -9,6 +9,7 @@
 #define motion_h
 
 #include "Arduino.h"
+#include <AccelStepper.h>
 
 #define MOTOR_INTERFACE_TYPE 1
 #define DEFAULT_STEP_PIN 2
@@ -21,13 +22,14 @@ typedef enum {
   ERROR_MOTION_MOTOR_INDELIBLE,
   ERROR_MOTION_MEMORY,
   ERROR_MOTION_FULL_MOTORS,
-  ERROR_MOTION_POINT_NOT_EXISTS
+  ERROR_MOTION_POINT_NOT_EXISTS,
+  ERROR_MOTION_AXIS_NOT_EXISTS
 } tErrorMotion;               //type error of this class
 
 typedef struct {
   int id;
-  int pos_x;
-  int pos_y;
+  int nAxis;
+  char *axis;
 } tPoint;
 
 typedef struct {
@@ -39,7 +41,7 @@ typedef struct {
   int type;
   int stepPin;
   int dirPin;
-  char axis;        //coordinate axis
+  char letter;        //coordinate axis
 } tMotor;
 
 typedef struct {
@@ -49,26 +51,32 @@ typedef struct {
 
 class Motion_lib {
   private:
-    tPointList _pointsList;
+    tPointList _pointList;
     tMotorList _motorList;
+    tErrorMotion _error;
 
     void _motorList_init(tMotorList *list);
     void _pointList_init(tPointList *list);
-    tErrorMotion _motorExists(tMotorList list, int axis);
+    tErrorMotion _motorExists(tMotorList list, int letter);
     tErrorMotion _pointExists(tPointList list, int id);
+    tErrorMotion _axisExists(tPoint list, char axis);
+    tErrorMotion _addAxis(tPointList *list, char axis);
+    tErrorMotion _removeAxis(tPointList *list, char axis);
     void _cpyMotor(tMotor *dest, tMotor orgn);
     void _cpyPoint(tPoint *dets, tMotor orgn);
 
   public:
     Motion_lib();
-    tErrorMotion addMotor(tMotorList *list, char axis);
-    tErrorMotion removeMotor(tMotorList *list, char axis);
+    tErrorMotion addMotor(tMotorList *list, char letter);
+    tErrorMotion removeMotor(tMotorList *list, char letter);
     tErrorMotion addPoint(tPointList *list, tPoint point);
     tErrorMotion removePoint(tPointList *list, int id);
-    tErrorMotion stepPin(tMotorList *list, char axis, int pin = NULL);
-    tErrorMotion dirPin(tMotorList *list, char axis, int pin = NULL);
-    tErrorMotion pos_x(tPointList *list, int id, int pos_x = NULL);
-    tErrorMotion pos_y(tPointList *list, int id, int pos_y = NULL);
+    int getStepPin(tMotorList list, char letter);
+    int getDirPin(tMotorList list, char letter);
+    int pointaxis_x(tPointList *list, int id, int axis_x = NULL);
+    int pointaxis_y(tPointList *list, int id, int axis_y = NULL);
+    tMotorList getMotorList();
+    tPointList getPointList();
   
 };
 
