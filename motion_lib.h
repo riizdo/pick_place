@@ -24,39 +24,39 @@ typedef enum {
   ERROR_MOTION_FULL_MOTORS,
   ERROR_MOTION_POINT_NOT_EXISTS,
   ERROR_MOTION_AXIS_NOT_EXISTS
-} tErrorMotion;               //type error of this class
+} tErrorMotion;                           //type error of this class
 
-typedef struct {
+typedef struct {                    //point type
   int id;
   int nAxis;
   char *axis;
 } tPoint;
 
-typedef struct {
+typedef struct {                    //point list type
   int nPoint;
   tPoint *point;
 } tPointList;
 
-typedef struct {
+typedef struct {                    //motor type
   int type;
   int stepPin;
   int dirPin;
   char letter;        //coordinate axis
 } tMotor;
 
-typedef struct {
+typedef struct {                    //motor list type
   int nMotor;
   tMotor *motor;
 } tMotorList;
 
-class Motion_lib {
-  private:
+class Motion_lib {                  //motion class---------------------------------------------
+  private:                          //private
     tPointList _pointList;
     tMotorList _motorList;
     tErrorMotion _error;
 
-    void _motorList_init(tMotorList *list);
-    void _pointList_init(tPointList *list);
+    void _motorList_init();
+    void _pointList_init();
     tErrorMotion _motorExists(tMotorList list, int letter);
     tErrorMotion _pointExists(tPointList list, int id);
     tErrorMotion _axisExists(tPoint list, char axis);
@@ -65,20 +65,18 @@ class Motion_lib {
     void _cpyMotor(tMotor *dest, tMotor orgn);
     void _cpyPoint(tPoint *dets, tMotor orgn);
 
-  public:
+  public:                           //public
     Motion_lib();
-    tErrorMotion addMotor(tMotorList *list, char letter);
+    tErrorMotion addMotor(char letter);
     tErrorMotion removeMotor(tMotorList *list, char letter);
-    tErrorMotion addPoint(tPointList *list, tPoint point);
+    tErrorMotion addPoint(tPointList *list);
     tErrorMotion removePoint(tPointList *list, int id);
     int getStepPin(tMotorList list, char letter);
     int getDirPin(tMotorList list, char letter);
-    int pointaxis_x(tPointList *list, int id, int axis_x = NULL);
-    int pointaxis_y(tPointList *list, int id, int axis_y = NULL);
     tMotorList getMotorList();
     tPointList getPointList();
-  
-};
+    int getPosition(char axis);//get de value of axis position
+};//close of class
 
 
 #endif

@@ -10,55 +10,56 @@
 
 
 Motion_lib::Motion_lib() {////////////////////////////////////////////////////CONSTRUCTOR////////////////////////////////////////////////
-  _motorList_init(&_motorList);
-  _pointList_init(&_pointList);
+  _motorList_init();
+  _pointList_init();
 
-  _error = addPoint(&_pointList, point);
-  _error = addMotor(&_motorList, 'x');
-  _error = addMotor(&_motorList, 'y');
+  _error = addPoint(&_pointList);
+  _error = addMotor('x');
+  _error = addMotor('y');
 }
 
-void Motion_lib::_motorList_init(tMotorList *list) {//-----------             motorList_init----------------------------------------------
-  free(list->motor);
-  list->nMotor = 0;
+void Motion_lib::_motorList_init() {//-----------             motorList_init----------------------------------------------
+  free(_motorList.motor);
+  _motorList.nMotor = 0;
 }
 
-void Motion_lib::_pointList_init(tPointList *list) {//-----                   pointList_init-----------------------------------------
-  free(list->point);
-  list->nPoint = 0;
+void Motion_lib::_pointList_init() {//-----                   pointList_init-----------------------------------------
+  free(_pointList.point);
+  _pointList.nPoint = 0;
 }
 
-tErrorMotion Motion_lib::addMotor(tMotorList *list, char letter) {//---         addMotor----------------------------------------------------
-  if (list->nMotor == 0) {//if list is empty----------------------
-    list->motor = (tMotor*) malloc(sizeof(tMotor));
-  } else if (list->nMotor < 12) {//if list is not empty and not full
-    for (int i = 0; i < list->nMotor; i++) {
-      if (list->motor[i].letter == letter) {//if this motor exists
+tErrorMotion Motion_lib::addMotor(char letter) {//---         addMotor----------------------------------------------------
+  if (_motorList.nMotor == 0) {//if list is empty----------------------
+    _motorList.motor = (tMotor*) malloc(sizeof(tMotor));
+  } else if (_motorList.nMotor < 12) {//if list is not empty and not full
+    for (int i = 0; i < _motorList.nMotor; i++) {
+      if (_motorList.motor[i].letter == letter) {//if this motor exists
         return ERROR_MOTION_MOTOR_EXISTS;
       }
     }
-    list->motor = (tMotor*) realloc(list->motor, (list->nMotor + 1) * sizeof(tMotor));
+    _motorList.motor = (tMotor*) realloc(_motorList.motor, (_motorList.nMotor + 1) * sizeof(tMotor));
   } else {//if list is full
     return ERROR_MOTION_FULL_MOTORS;
   }
 
-  if (list->motor == NULL) {//if not memory reserve
+  if (_motorList.motor == NULL) {//if not memory reserve
     return ERROR_MOTION_MEMORY;
   }
 
-  list->motor[list->nMotor].letter = letter;//assign the parameters of the new motor
-  if (list->nMotor == 0) {
-    list->motor[list->nMotor].type = MOTOR_INTERFACE_TYPE;
-    list->motor[list->nMotor].stepPin = DEFAULT_STEP_PIN;
-    list->motor[list->nMotor].dirPin = DEFAULT_DIR_PIN;
+  _motorList.motor[_motorList.nMotor].letter = letter;//assign the parameters of the new motor
+  if (_motorList.nMotor == 0) {
+    _motorList.motor[_motorList.nMotor].type = MOTOR_INTERFACE_TYPE;
+    _motorList.motor[_motorList.nMotor].stepPin = DEFAULT_STEP_PIN;
+    _motorList.motor[_motorList.nMotor].dirPin = DEFAULT_DIR_PIN;
   } else {
-    list->motor[list->nMotor].type = MOTOR_INTERFACE_TYPE;
-    list->motor[list->nMotor].stepPin = list->motor[list->nMotor - 1].stepPin + 1;
-    list->motor[list->nMotor].dirPin = list->motor[list->nMotor -1].dirPin + 1;
+    _motorList.motor[_motorList.nMotor].type = MOTOR_INTERFACE_TYPE;
+    _motorList.motor[_motorList.nMotor].stepPin = _motorList.motor[_motorList.nMotor - 1].stepPin + 1;
+    _motorList.motor[_motorList.nMotor].dirPin = _motorList.motor[_motorList.nMotor -1].dirPin + 1;
   }
-  list->nMotor++;
+  _motorList.nMotor++;
+  tErrorMotion error = _addAxis(&_pointList, letter);
   return OK_MOTION;
-}
+}//close of method
 
 tErrorMotion Motion_lib::removeMotor(tMotorList *list, char letter) {//---      removeMotor----------------------------------------------------------
   bool restore = true;
@@ -103,7 +104,7 @@ tErrorMotion Motion_lib::_motorExists(tMotorList list, int letter) {//---       
   return ERROR_MOTION_MOTOR_NOT_EXISTS;
 }
 
-tErrorMotion Motion_lib::addPoint(tPointList *list, tPoint point) {// ----      addPoint-------------------------------------------------------
+tErrorMotion Motion_lib::addPoint(tPointList *list) {// ----                    addPoint-------------------------------------------------------
   if (list->nPoint == 0) {
     list->point = (tPoint*) malloc(sizeof(tPoint));
   } else {
@@ -114,9 +115,7 @@ tErrorMotion Motion_lib::addPoint(tPointList *list, tPoint point) {// ----      
     return ERROR_MOTION_MEMORY;
   }
 
-  list->point[list->nPoint].id = point.id;
-  list->point[list->nPoint].axis[0] = point.axis[0];
-  list->point[list->nPoint].axis[1] = point.axis[1];
+  list->point[list->nPoint].id = list->point[list->nPoint - 1].id + 1;
   list->nPoint++;
 
   return OK_MOTION;
@@ -180,40 +179,6 @@ int Motion_lib::getDirPin(tMotorList list, char letter) {//--------------       
   }
 }
 
-int Motion_lib::pointaxis_x(tPointList *list, int id, int axis_x = NULL) {//------  pointaxis_x------------------------------------------------------
-  if (_pointExists(*list, id) == ERROR_MOTION_POINT_NOT_EXISTS) {
-    return NULL;
-  }
-
-  for (int i = 0; i < list->nPoint; i++) {
-    if (list->point[i].id == id) {
-      if (axis_x == NULL) {
-        return list->point[i].axis[0];
-      } else {
-        list->point[i].axis[0] = axis_x;
-        return NULL;
-      }//close if else
-    }//close if
-  }//close for
-}//close method
-
-int Motion_lib::pointaxis_y(tPointList *list, int id, int axis_y = NULL) {//-------   pointaxis_y----------------------------------------------
-  if (_pointExists(*list, id) == ERROR_MOTION_POINT_NOT_EXISTS) {
-    return NULL;
-  }
-
-  for (int i = 0; i < list->nPoint; i++) {
-    if (list->point[i].id == id) {
-      if (axis_y == NULL) {
-        return list->point[i].axis[1];
-      } else {
-        list->point[i].axis[1] = axis_y;
-        return NULL;
-      }//close if else
-    }//close if
-  }//close for
-}//close method
-
 tMotorList Motion_lib::getMotorList() {//-----------------------------              getMotorList-------------------------------------------
   return _motorList;
 }
@@ -251,4 +216,8 @@ tErrorMotion Motion_lib::_addAxis(tPointList *list, char axis) {//----          
     list->point[i].axis[list->point[i].nAxis] = axis;
     list->point[i].nAxis++;
   }
+}
+
+int Motion_lib::getPosition(char axis) {
+  
 }
