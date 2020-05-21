@@ -23,7 +23,8 @@ typedef enum {
   ERROR_MOTION_MEMORY,
   ERROR_MOTION_FULL_MOTORS,
   ERROR_MOTION_POINT_NOT_EXISTS,
-  ERROR_MOTION_AXIS_NOT_EXISTS
+  ERROR_MOTION_AXIS_NOT_EXISTS,
+  ERROR_MOTION_AXIS_EXISTS
 } tErrorMotion;                           //type error of this class
 
 typedef struct {                    //point type
@@ -57,22 +58,25 @@ class Motion_lib {                  //motion class------------------------------
 
     void _motorList_init();
     void _pointList_init();
-    tErrorMotion _motorExists(tMotorList list, int letter);
-    tErrorMotion _pointExists(tPointList list, int id);
-    tErrorMotion _axisExists(tPoint list, char axis);
-    tErrorMotion _addAxis(tPointList *list, char axis);
-    tErrorMotion _removeAxis(tPointList *list, char axis);
+    tErrorMotion _motorExists(int letter);
+    tErrorMotion _pointExists(int id);
+    tErrorMotion _axisExists(char axis);
+    tErrorMotion _addAxis(char axis);
+    tErrorMotion _removeAxis(char axis);//pendiente de remove axis de actualPosition!!!!!!!!!!!!!!!!!!!
     void _cpyMotor(tMotor *dest, tMotor orgn);
     void _cpyPoint(tPoint *dets, tMotor orgn);
 
   public:                           //public
-    Motion_lib();
+    Motion_lib();//constructor
+
+    tPoint actualPosition;//actual position of the util
+    
     tErrorMotion addMotor(char letter);
-    tErrorMotion removeMotor(tMotorList *list, char letter);
-    tErrorMotion addPoint(tPointList *list);
-    tErrorMotion removePoint(tPointList *list, int id);
-    int getStepPin(tMotorList list, char letter);
-    int getDirPin(tMotorList list, char letter);
+    tErrorMotion removeMotor(char letter);
+    tErrorMotion addPoint();
+    tErrorMotion removePoint(int id);
+    int getStepPin(char letter);
+    int getDirPin(char letter);
     tMotorList getMotorList();
     tPointList getPointList();
     int getPosition(char axis);//get de value of axis position
