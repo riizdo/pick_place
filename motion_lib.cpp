@@ -9,13 +9,15 @@
 #include "motion_lib.h"
 
 
-Motion_lib::Motion_lib() {////////////////////////////////////////////////////CONSTRUCTOR////////////////////////////////////////////////
+Motion_lib::Motion_lib(char axis_1 = 'x', char axis_2 = 'y') {///////CONSTRUCTOR////////////////////////////////////////////////
+  _state = STOPPED;
+  
   _motorList_init();
   _pointList_init();
 
   _error = addPoint();
-  _error = addMotor('x');
-  _error = addMotor('y');
+  _error = addMotor(axis_1);
+  _error = addMotor(axis_2);
 }
 
 void Motion_lib::_motorList_init() {//-----------             motorList_init----------------------------------------------
@@ -62,6 +64,7 @@ tErrorMotion Motion_lib::addMotor(char letter) {//---         addMotor----------
   }
   _motorList.nMotor++;
   tErrorMotion error = _addAxis(letter);
+  
   return OK_MOTION;
 }//close of method
 
@@ -244,11 +247,26 @@ tErrorMotion Motion_lib::_removeAxis(char axis) {//--------   removeAxis--------
     return ERROR_MOTION_AXIS_NOT_EXISTS;
   }
 
+  if (actualPosition.nAxis == 1) {
+    free(actualPosition.axis);
+  } else {
+    for (int i = actualPosition.nAxis; i > 0; i--) {
+      actualPosition.axis[i - 1] = actualPosition.axis[i];
+      if (actualPosition.axis[i - 1] == axis) {
+        break; 
+      }
+    }
+  }
+
+  if (actualPosition.axis == NULL) {
+    return ERROR_MOTION_MEMORY;
+  }
+
   for (int i = 0; i < _pointList.nPoint; i++) {
     if (_pointList.point[i].nAxis == 1) {
       free(_pointList.point[i].axis);
     } else {
-      for (int e = _pointList.point[i].nAxis; e > 0; i++) {
+      for (int e = _pointList.point[i].nAxis; e > 0; i--) {
         _pointList.point[i].axis[e - 1] = _pointList.point[i].axis[e];
         if (_pointList.point[i].axis[e - 1] == axis) {
           break;
@@ -264,3 +282,30 @@ tErrorMotion Motion_lib::_removeAxis(char axis) {//--------   removeAxis--------
 
   return OK_MOTION;
 }//close method
+
+void Motion_lib::listener(tState state) {//---------                  listener--------------------------------------------
+  if (_state != state) {
+    _error = start(state);
+  }
+  for (int i = 0; i < actualPosition.nAxis; i++) {
+    
+  }
+}
+
+tErrorMotion Motion_lib::start(tState state = STOPPED) {//-            marcha----------------------------------------------
+  if (_error != OK_MOTION) {
+    _state = STOPPED;
+  } else if (_error == OK_MOTION) {
+    _state = state;
+  }
+  
+  return _error;
+}
+
+void Motion_lib::setPointId(int id) {//---------                       setPointId-------------------------------------------
+  actualPosition.id = id;
+}
+
+int Motion_lib::getPointId() {//--------------------                   getPointId---------------------------------------
+  return actualPosition.id;
+}

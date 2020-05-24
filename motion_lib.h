@@ -5,11 +5,10 @@
  *  description: data and headers for motion library
  */
 
-#ifndef motion_h
-#define motion_h
+#ifndef motion_lib_h
+#define motion_lib_h
 
 #include "Arduino.h"
-#include <AccelStepper.h>
 
 #define MOTOR_INTERFACE_TYPE 1
 #define DEFAULT_STEP_PIN 2
@@ -27,11 +26,26 @@ typedef enum {
   ERROR_MOTION_AXIS_EXISTS
 } tErrorMotion;                           //type error of this class
 
+typedef enum {
+  STOPPED,
+  RUN,
+  STANDBY
+} tState;
+
 typedef struct {                    //point type
   int id;
   int nAxis;
   char *axis;
+  int *axisValue;
 } tPoint;
+
+typedef struct {
+  int id;
+  int nAxis;
+  char *axis;
+  int *distance;
+  int *cadence;
+} tTrayectory;
 
 typedef struct {                    //point list type
   int nPoint;
@@ -51,23 +65,8 @@ typedef struct {                    //motor list type
 } tMotorList;
 
 class Motion_lib {                  //motion class---------------------------------------------
-  private:                          //private
-    tPointList _pointList;
-    tMotorList _motorList;
-    tErrorMotion _error;
-
-    void _motorList_init();
-    void _pointList_init();
-    tErrorMotion _motorExists(int letter);
-    tErrorMotion _pointExists(int id);
-    tErrorMotion _axisExists(char axis);
-    tErrorMotion _addAxis(char axis);
-    tErrorMotion _removeAxis(char axis);//pendiente de remove axis de actualPosition!!!!!!!!!!!!!!!!!!!
-    void _cpyMotor(tMotor *dest, tMotor orgn);
-    void _cpyPoint(tPoint *dets, tMotor orgn);
-
-  public:                           //public
-    Motion_lib();//constructor
+   public:                           //public
+    Motion_lib(char axis_1 = 'x', char axis_2 = 'y');//constructor
 
     tPoint actualPosition;//actual position of the util
     
@@ -80,7 +79,27 @@ class Motion_lib {                  //motion class------------------------------
     tMotorList getMotorList();
     tPointList getPointList();
     int getPosition(char axis);//get de value of axis position
-};//close of class
+    void listener(tState state);
+    tErrorMotion start(tState state);
+    void setPointId(int id);
+    int getPointId();
+     
+  private:                          //private
+    tState _state;//state of the object
+    tPointList _pointList;//point of coordinates list
+    tMotorList _motorList;//motor of axis of coordinates list
+    tErrorMotion _error;//error de motion
+    tTrayectory _trayectory;//trayectory for move to point
 
+    void _motorList_init();
+    void _pointList_init();
+    tErrorMotion _motorExists(int letter);
+    tErrorMotion _pointExists(int id);
+    tErrorMotion _axisExists(char axis);
+    tErrorMotion _addAxis(char axis);
+    tErrorMotion _removeAxis(char axis);
+    void _cpyMotor(tMotor *dest, tMotor orgn);
+    void _cpyPoint(tPoint *dets, tMotor orgn);
+};//close of class
 
 #endif

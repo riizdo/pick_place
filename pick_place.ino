@@ -10,7 +10,9 @@
 
 
 Serial_lib serial(0);
-Motion_lib motion();
+Motion_lib motion('x', 'y');
+
+int state = 0;
 
 void setup() {
   serial.init();
@@ -19,5 +21,5 @@ void setup() {
 
 void loop() {
   serial.listener();
-  
+  motion.listener(state);
 }
