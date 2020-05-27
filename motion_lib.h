@@ -39,13 +39,18 @@ typedef struct {                    //point type
   int *axisValue;
 } tPoint;
 
-typedef struct {
+typedef struct {                    //trayectory type
   int id;
   int nAxis;
   char *axis;
   int *distance;
   int *cadence;
 } tTrayectory;
+
+typedef struct {                    //trayectory list type
+  int nTrayctory;
+  tTrayectory *trayectory;
+} tTrayectoryList;
 
 typedef struct {                    //point list type
   int nPoint;

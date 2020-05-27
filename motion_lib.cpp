@@ -1,3 +1,4 @@
+
 /*  file: motion_lib.cpp
  *  author: riizdo
  *  date: 16/05/2020
@@ -309,3 +310,5 @@ void Motion_lib::setPointId(int id) {//---------                       setPointI
 int Motion_lib::getPointId() {//--------------------                   getPointId---------------------------------------
   return actualPosition.id;
 }
+
+void Motion_lib::calculate
