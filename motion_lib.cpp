@@ -33,14 +33,14 @@ void Motion_lib::_pointList_init() {//-----                   pointList_init----
 
 tErrorMotion Motion_lib::addMotor(char letter) {//---         addMotor----------------------------------------------------
   if (_motorList.nMotor == 0) {//if list is empty----------------------
-    _motorList.motor = (tMotor*) malloc(sizeof(tMotor));
+    _motorList.motor = (Motor_lib*) malloc(sizeof(Motor_lib));
   } else if (_motorList.nMotor < 12) {//if list is not empty and not full
     for (int i = 0; i < _motorList.nMotor; i++) {
       if (_motorList.motor[i].letter == letter) {//if this motor exists
         return ERROR_MOTION_MOTOR_EXISTS;
       }
     }
-    _motorList.motor = (tMotor*) realloc(_motorList.motor, (_motorList.nMotor + 1) * sizeof(tMotor));
+    _motorList.motor = (Motor_lib*) realloc(_motorList.motor, (_motorList.nMotor + 1) * sizeof(Motor_lib));
   } else {//if list is full
     return ERROR_MOTION_FULL_MOTORS;
   }
@@ -93,7 +93,7 @@ tErrorMotion Motion_lib::removeMotor(char letter) {//---      removeMotor-------
     } 
   }
   _motorList.nMotor--;
-  _motorList.motor = (tMotor*) realloc(_motorList.motor, _motorList.nMotor * sizeof(tMotor));
+  _motorList.motor = (Motor_lib*) realloc(_motorList.motor, _motorList.nMotor * sizeof(Motor_lib));
 
   if (_motorList.motor == NULL) {
     return ERROR_MOTION_MEMORY;
@@ -104,7 +104,7 @@ tErrorMotion Motion_lib::removeMotor(char letter) {//---      removeMotor-------
 
 tErrorMotion Motion_lib::_motorExists(int letter) {//---        motorExists----------------------------------------------------
   for (int i = 0; i < _motorList.nMotor; i++) {
-    if (_motorList.motor[i].letter == letter) {
+    if (_motorList.motor[i].axis == letter) {
       return OK_MOTION;
     }
   }
@@ -169,7 +169,7 @@ int Motion_lib::getStepPin(char letter) {//--------------         getStepPin----
   }
 
   for (int i = 0; i < _motorList.nMotor; i++) {
-    if (_motorList.motor[i].letter == letter) {
+    if (_motorList.motor[i].axis == letter) {
       return _motorList.motor[i].stepPin;
     }
   }
@@ -181,7 +181,7 @@ int Motion_lib::getDirPin(char letter) {//--------------           getDirPin----
   }
 
   for (int i = 0; i < _motorList.nMotor; i++) {
-    if (_motorList.motor[i].letter == letter) {
+    if (_motorList.motor[i].axis == letter) {
       return _motorList.motor[i].dirPin;
     }
   }
@@ -310,5 +310,3 @@ void Motion_lib::setPointId(int id) {//---------                       setPointI
 int Motion_lib::getPointId() {//--------------------                   getPointId---------------------------------------
   return actualPosition.id;
 }
-
-void Motion_lib::calculate

@@ -9,6 +9,7 @@
 #define motion_lib_h
 
 #include "Arduino.h"
+#include "motor_lib.h"
 
 #define MOTOR_INTERFACE_TYPE 1
 #define DEFAULT_STEP_PIN 2
@@ -57,16 +58,9 @@ typedef struct {                    //point list type
   tPoint *point;
 } tPointList;
 
-typedef struct {                    //motor type
-  int type;
-  int stepPin;
-  int dirPin;
-  char letter;        //coordinate axis
-} tMotor;
-
 typedef struct {                    //motor list type
   int nMotor;
-  tMotor *motor;
+  Motor_lib *motor;
 } tMotorList;
 
 class Motion_lib {                  //motion class---------------------------------------------
@@ -103,8 +97,8 @@ class Motion_lib {                  //motion class------------------------------
     tErrorMotion _axisExists(char axis);
     tErrorMotion _addAxis(char axis);
     tErrorMotion _removeAxis(char axis);
-    void _cpyMotor(tMotor *dest, tMotor orgn);
-    void _cpyPoint(tPoint *dets, tMotor orgn);
+    void _cpyMotor(Motor_lib *dest, Motor_lib orgn);
+    void _cpyPoint(tPoint *dets, Motor_lib orgn);
 };//close of class
 
 #endif
