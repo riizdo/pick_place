@@ -10,13 +10,13 @@
 #include "motor_lib.h"
 
 
-Motor_lib::Motor_lib(int type, int stepPin, int dirPin, char axis):AccelStepper(type, stepPin, dirPin) {
+Stepper_lib::Stepper_lib(int type, int stepPin, int dirPin, char axis):AccelStepper(type, stepPin, dirPin) {
   _type = type;
   _stepPin = stepPin;
   _dirPin = dirPin;
   _axis = axis;
 }
 
-char Motor_lib::getAxis() {
+char Stepper_lib::getAxis() {
   return _axis;
 }

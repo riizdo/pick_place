@@ -12,9 +12,9 @@
 #include <AccelStepper.h>
 
 
-class Motor_lib:AccelStepper {
+class Stepper_lib:AccelStepper {
   public:
-    Motor_lib(int type, int stepPin, int dirPin, char axis);
+    Stepper_lib(int type, int stepPin, int dirPin, char axis);
 
     char getAxis();
     int getPosition();

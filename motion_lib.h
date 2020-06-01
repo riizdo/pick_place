@@ -14,7 +14,9 @@
 #define MOTOR_INTERFACE_TYPE 1
 #define DEFAULT_STEP_PIN 2
 #define DEFAULT_DIR_PIN 22
+#define MAX_MOTOR 10
 
+/////////////////////////////////////////////////////////////////////TYPES//////////////////////////////////////////////////////////////
 typedef enum {
   OK_MOTION,
   ERROR_MOTION_MOTOR_EXISTS,
@@ -60,45 +62,24 @@ typedef struct {                    //point list type
 
 typedef struct {                    //motor list type
   int nMotor;
-  Motor_lib *motor;
+  Stepper_lib* motor[MAX_MOTOR];
 } tMotorList;
 
-class Motion_lib {                  //motion class---------------------------------------------
-   public:                           //public
-    Motion_lib(char axis_1 = 'x', char axis_2 = 'y');//constructor
 
-    tPoint actualPosition;//actual position of the util
-    
-    tErrorMotion addMotor(char letter);
-    tErrorMotion removeMotor(char letter);
-    tErrorMotion addPoint();
-    tErrorMotion removePoint(int id);
-    int getStepPin(char letter);
-    int getDirPin(char letter);
-    tMotorList getMotorList();
-    tPointList getPointList();
-    int getPosition(char axis);//get de value of axis position
-    void listener(tState state);
-    tErrorMotion start(tState state);
-    void setPointId(int id);
-    int getPointId();
-     
+/////////////////////////////////////////////////////////////////CLASS MOTION_LIB////////////////////////////////////////////////////////
+class Motion_lib {                  //motion class---------------------------------------------
+  public:                           //public
+    Motion_lib(int reference);
+
+    tErrorMotion Motion_lib::_motorList_add(char axis);
   private:                          //private
-    tState _state;//state of the object
-    tPointList _pointList;//point of coordinates list
-    tMotorList _motorList;//motor of axis of coordinates list
-    tErrorMotion _error;//error de motion
-    tTrayectory _trayectory;//trayectory for move to point
+    tMotorList _motorList;
+    tPointList _pointList;
+    tPoint _actualPoint;
 
     void _motorList_init();
-    void _pointList_init();
-    tErrorMotion _motorExists(int letter);
-    tErrorMotion _pointExists(int id);
-    tErrorMotion _axisExists(char axis);
-    tErrorMotion _addAxis(char axis);
-    tErrorMotion _removeAxis(char axis);
-    void _cpyMotor(Motor_lib *dest, Motor_lib orgn);
-    void _cpyPoint(tPoint *dets, Motor_lib orgn);
+    bool _existAxis(char axis);
+    tErrorMotion _axisAdd(char axis);
 };//close of class
 
 #endif
